@@ -18,26 +18,20 @@ namespace Custom_Aura
 {
     public partial class MainWindow : Window
     {
-        // Свернуть окно
         private void MinimizeWindow(object sender, RoutedEventArgs e)
         {
             this.WindowState = WindowState.Minimized;
         }
-
-        // Развернуть/восстановить окно
         private void MaximizeRestoreWindow(object sender, RoutedEventArgs e)
         {
             this.WindowState = this.WindowState == WindowState.Maximized
                 ? WindowState.Normal
                 : WindowState.Maximized;
         }
-
-        // Закрыть окно
         private void CloseWindow(object sender, RoutedEventArgs e)
         {
             this.Close();
         }
-
 
 
         private IAuraSdk sdk;
