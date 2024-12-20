@@ -1,0 +1,142 @@
+﻿<Window x:Class="Custom_Aura.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+        mc:Ignorable="d"
+        Title="Custom Aura" 
+        MinWidth="1000" 
+        MinHeight="800" 
+        ScrollViewer.VerticalScrollBarVisibility="Disabled"
+        Width="1000"
+        Height="800" 
+        WindowStartupLocation="CenterScreen">
+
+    <Window.Resources>
+        <Style x:Key="RoundedButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="#FF000000" />
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="FontSize" Value="16" />
+            <Setter Property="FontWeight" Value="Bold" />
+            <Setter Property="Height" Value="50" />
+            <Setter Property="Width" Value="150" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}"
+                                CornerRadius="30"
+                                BorderBrush="#FFFFFFFF"
+                                BorderThickness="2">
+                            <ContentPresenter HorizontalAlignment="Center"
+                                              VerticalAlignment="Center" />
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style TargetType="{x:Type Panel}" x:Key="WindowMainPanelStyle">
+            <Setter Property="Margin" Value="0" />
+            <Setter Property="Background">
+                <Setter.Value>
+                    <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0" MappingMode="RelativeToBoundingBox" SpreadMethod="Pad">
+                        <LinearGradientBrush.RelativeTransform>
+                            <TransformGroup>
+                                <ScaleTransform CenterX="0.5" CenterY="0.5"/>
+                                <SkewTransform CenterY="0.5" CenterX="0.5"/>
+                                <RotateTransform Angle="-49.399" CenterX="0.5" CenterY="0.5"/>
+                                <TranslateTransform/>
+                            </TransformGroup>
+                        </LinearGradientBrush.RelativeTransform>
+                        <GradientStop Color="#FF0C0013" Offset="0"/>
+                        <GradientStop Color="#FF080027" Offset="0.492"/>
+                        <GradientStop Color="#FF190C2D" Offset="1"/>
+                    </LinearGradientBrush>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}, Path=WindowState}" Value="Maximized">
+                    <Setter Property="Margin" Value="7" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+    </Window.Resources>
+
+    <WindowChrome.WindowChrome>
+        <WindowChrome 
+            CaptionHeight="40"              
+            CornerRadius="40"
+            NonClientFrameEdges="None"
+            GlassFrameThickness="0"
+            ResizeBorderThickness="5"
+            UseAeroCaptionButtons="False"
+            />
+    </WindowChrome.WindowChrome>
+
+    <Grid  Style="{StaticResource WindowMainPanelStyle}">
+
+        <DockPanel Background="#FF4A3373" Height="40" VerticalAlignment="Top" >
+            <TextBlock Text="Custom Aura"
+                       Foreground="White"
+                       VerticalAlignment="Center"
+                       Margin="30,0,0,0"
+                       FontWeight="Bold" />
+
+
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+
+                <Button Content="—" Width="40" Height="40" 
+                            Click="MinimizeWindow" 
+                            Background="Transparent" 
+                            Foreground="White" 
+                            BorderBrush="Transparent" 
+                            ToolTip="Свернуть"
+                            WindowChrome.IsHitTestVisibleInChrome="True"
+                        
+                />
+
+                <Button Content="◻" Width="40" Height="40" 
+                            Click="MaximizeRestoreWindow" 
+                            Background="Transparent" 
+                            Foreground="White" 
+                            BorderBrush="Transparent" 
+                            ToolTip="Развернуть/Восстановить"
+                            WindowChrome.IsHitTestVisibleInChrome="True"
+                />
+
+                <Button Content="✕" Width="40" Height="40" 
+                            Click="CloseWindow" 
+                            Background="Transparent" 
+                            Foreground="White" 
+                            BorderBrush="Transparent" 
+                            ToolTip="Закрыть" 
+                            WindowChrome.IsHitTestVisibleInChrome="True"
+                        
+                />
+
+            </StackPanel>
+        </DockPanel>
+
+        <!-- Элемент для выбора цвета -->
+        <xctk:ColorPicker x:Name="ColorPickerControl"
+                          HorizontalAlignment="Right"
+                          VerticalAlignment="Top"
+                          Margin="0,90,20,0"
+                          Width="200"
+                          Height="134" />
+
+        <Rectangle Height="100" 
+                   Fill="#FF4A3373"
+                   ScrollViewer.VerticalScrollBarVisibility="Disabled" 
+                   VerticalAlignment="Bottom"/>
+
+        <!-- Кнопка для применения цвета -->
+        <Button Content="Set All Lights"
+                Click="SetAllLightsColor"
+                Style="{StaticResource RoundedButtonStyle}" Height="60" Width="200" VerticalAlignment="Bottom" Margin="0,0,20,20" HorizontalAlignment="Right">
+        </Button>
+
+    </Grid>
+</Window>
