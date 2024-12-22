@@ -14,6 +14,7 @@
         WindowStartupLocation="CenterScreen">
 
     <Window.Resources>
+
         <Style x:Key="RoundedButtonStyle" TargetType="Button">
             <Setter Property="Background" Value="#FF000000" />
             <Setter Property="Foreground" Value="White" />
@@ -77,13 +78,8 @@
 
     <Grid  Style="{StaticResource WindowMainPanelStyle}">
 
-        <DockPanel Background="#FF62272D" Height="40" VerticalAlignment="Top" >
-            <TextBlock Text="Custom Aura"
-                       Foreground="White"
-                       VerticalAlignment="Center"
-                       Margin="30,0,0,0"
-                       FontWeight="Bold" />
 
+        <DockPanel Background="#FF62272D" Height="40" VerticalAlignment="Top" >
 
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
 
@@ -119,88 +115,120 @@
             </StackPanel>
         </DockPanel>
 
-        <!-- Элемент для выбора цвета -->
-        <xctk:ColorPicker x:Name="ColorPickerControl"
-                          HorizontalAlignment="Right"
-                          VerticalAlignment="Top"
-                          Margin="0,90,20,0"
-                          Width="200"
-                          Height="134" />
+        <Grid x:Name="RightPanel" HorizontalAlignment="Right" Width="254" Margin="0,45,15,15">
+            <Rectangle Fill="#FF361419" RadiusX="15" RadiusY="15" />
+            <StackPanel VerticalAlignment="Top" Margin="20,20,20,20">
+                <xctk:ColorPicker x:Name="ColorPickerControl"
+                              Width="200" 
+                              Height="134"
+                              HorizontalAlignment="Center" />
+                <Button Content="Set All Lights"
+                    Click="SetAllLightsColor"
+                    Style="{StaticResource RoundedButtonStyle}" 
+                    Height="60" 
+                    Width="200" 
+                    Margin="0,20,0,0"
+                    HorizontalAlignment="Center"/>
+            </StackPanel>
+        </Grid>
 
-        <Rectangle 
-            Fill="#FF361419"
-            ScrollViewer.VerticalScrollBarVisibility="Disabled" 
-            Margin="15,15,0,15" 
-            Width="120" 
-            HorizontalAlignment="Left" RadiusX="15" RadiusY="15" >
-        </Rectangle>
+        <Grid x:Name="LeftPanel" HorizontalAlignment="Left" Width="120" Margin="15,15,0,15">
+            <Grid.RenderTransform>
+                <TranslateTransform X="0" />
+            </Grid.RenderTransform>
 
+            <!-- Фон панели -->
+            <Rectangle Fill="#FF361419" RadiusX="15" RadiusY="15" />
 
-        <!-- Кнопка для применения цвета -->
-        <Button Content="Set All Lights"
-                Click="SetAllLightsColor"
-                Style="{StaticResource RoundedButtonStyle}" Height="60" Width="200" VerticalAlignment="Bottom" Margin="0,0,20,20" HorizontalAlignment="Right">
-        </Button>
+            <!-- Верхний логотип -->
+            <Rectangle HorizontalAlignment="Center" Height="50" Margin="0,40,0,0" VerticalAlignment="Top" Width="50">
+                <Rectangle.Fill>
+                    <ImageBrush ImageSource="/Logo.png" Stretch="Uniform" />
+                </Rectangle.Fill>
+            </Rectangle>
 
-        <Rectangle HorizontalAlignment="Left" Height="50" Margin="50,40,0,0" VerticalAlignment="Top" Width="50">
-            <Rectangle.Fill>
-                <ImageBrush ImageSource="/Logo.png" Stretch="Uniform"/>
-            </Rectangle.Fill>
-        </Rectangle>
+            <!-- Кнопка All Lights -->
+            <StackPanel Name="L_Panel_All_Light" VerticalAlignment="Top" Margin="0,130,0,0" HorizontalAlignment="Center">
+                <Button Height="60"
+                Width="60"
+                Foreground="#FF361419"
+                BorderBrush="White" 
+                Click="AllLightsButton_Click">
+                    <Button.Background>
+                        <ImageBrush ImageSource="/All_logo.jpg" Stretch="Fill" />
+                    </Button.Background>
+                    <Button.Template>
+                        <ControlTemplate TargetType="Button">
+                            <Border Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            CornerRadius="15">
+                                <ContentPresenter HorizontalAlignment="Center"
+                                          VerticalAlignment="Center" />
+                            </Border>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
+                <TextBlock Text="All Lights"
+                   Foreground="White"
+                   FontSize="12"
+                   HorizontalAlignment="Center" />
+            </StackPanel>
 
-        <StackPanel HorizontalAlignment="Left" Margin="45,127,0,0" VerticalAlignment="Top">
-            <Button Height="60"
-                    Width="60"
-                    Foreground="#FF361419"
-                    BorderBrush="White" >
-                <Button.Background>
-                    <ImageBrush ImageSource="/All_logo.jpg" Stretch="Fill"/>
-                </Button.Background>
-                <Button.Template>
-                    <ControlTemplate TargetType="Button">
-                        <Border Background="{TemplateBinding Background}"
-                                    BorderBrush="{TemplateBinding BorderBrush}"
-                                    CornerRadius="15">
-                            <ContentPresenter HorizontalAlignment="Center"
-                                                      VerticalAlignment="Center" />
-                        </Border>
-                    </ControlTemplate>
-                </Button.Template>
-            </Button>
+            <!-- Кнопка Star -->
+            <StackPanel Name="L_Panel_Star" VerticalAlignment="Top" Margin="0,220,0,0" HorizontalAlignment="Center">
+                <Button Height="60"
+                Width="60"
+                Foreground="#FF361419"
+                BorderBrush="White" 
+                Click="StarButton_Click">
+                    <Button.Background>
+                        <ImageBrush ImageSource="/Star.jpg" />
+                    </Button.Background>
+                    <Button.Template>
+                        <ControlTemplate TargetType="Button">
+                            <Border Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            CornerRadius="15">
+                                <ContentPresenter HorizontalAlignment="Center"
+                                          VerticalAlignment="Center" />
+                            </Border>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
+                <TextBlock Text="Star"
+                   Foreground="White"
+                   FontSize="12"
+                   HorizontalAlignment="Center" />
+            </StackPanel>
 
-            <TextBlock 
-               Text="All Lights"
-               Foreground="White"
-               FontSize="12" HorizontalAlignment="Center"
-               />
-        </StackPanel>
+            <!-- Кнопка None -->
+            <StackPanel VerticalAlignment="Top" Margin="0,310,0,0" HorizontalAlignment="Center">
+                <Button Height="60"
+                Width="60"
+                Foreground="#FF361419"
+                BorderBrush="White" 
+                Click="NoneButton_Click">
+                    <Button.Background>
+                        <ImageBrush ImageSource="/None_logo.jpg" />
+                    </Button.Background>
+                    <Button.Template>
+                        <ControlTemplate TargetType="Button">
+                            <Border Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            CornerRadius="15">
+                                <ContentPresenter HorizontalAlignment="Center"
+                                          VerticalAlignment="Center" />
+                            </Border>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
+                <TextBlock Text="None"
+                   Foreground="White"
+                   FontSize="12"
+                   HorizontalAlignment="Center" />
+            </StackPanel>
+        </Grid>
 
-        <StackPanel HorizontalAlignment="Left" Margin="45,216,0,0" VerticalAlignment="Top">
-            <Button Height="60"
-                    Width="60"
-                    Foreground="#FF361419"
-                    BorderBrush="White" >
-                <Button.Background>
-                    <ImageBrush ImageSource="/None_logo.jpg"/>
-                </Button.Background>
-                <Button.Template>
-                    <ControlTemplate TargetType="Button">
-                        <Border Background="{TemplateBinding Background}"
-                                    BorderBrush="{TemplateBinding BorderBrush}"
-                                    CornerRadius="15">
-                            <ContentPresenter HorizontalAlignment="Center"
-                                                      VerticalAlignment="Center" />
-                        </Border>
-                    </ControlTemplate>
-                </Button.Template>
-            </Button>
-
-            <TextBlock 
-               Text="None"
-               Foreground="White"
-               FontSize="12" HorizontalAlignment="Center"
-               />
-        </StackPanel>
 
     </Grid>
 </Window>
