@@ -13,7 +13,6 @@
         Height="800" 
         WindowStartupLocation="CenterScreen">
     
-    
         <Window.DataContext>
             <viewModel:MainViewModel/>
         </Window.DataContext>
@@ -31,7 +30,6 @@
     </WindowChrome.WindowChrome>
 
     <Grid Style="{StaticResource WindowMainPanelStyle}">
-
 
         <DockPanel Background="#FF62272D" Height="40" VerticalAlignment="Top" >
 
@@ -92,21 +90,22 @@
                         Margin="0,130,0,0" 
                         HorizontalAlignment="Center" 
                         Height="500">
-               
+
                 <RadioButton Content="RadioButton" 
                              HorizontalAlignment="Center" 
                              Margin="0,0,0,0" 
                              VerticalAlignment="Top"
                              IsChecked="True"
                              Command="{Binding All_ViewComand}"/>
-                
+
                 <RadioButton Content="RadioButton" 
                              HorizontalAlignment="Center" 
                              Margin="0,30,0,0" 
                              VerticalAlignment="Top"
                              Command="{Binding Star_ViewComand}"/>
             </StackPanel>
-            
+
         </Grid>
+
     </Grid>
 </Window>
