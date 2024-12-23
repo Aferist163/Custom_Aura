@@ -8,15 +8,22 @@
              mc:Ignorable="d" 
              d:DesignHeight="800" d:DesignWidth="1000">
     <Grid x:Name="RightPanel" HorizontalAlignment="Right" Width="254" Margin="0,45,15,15">
+        
         <Rectangle Fill="#FF361419" RadiusX="15" RadiusY="15" />
+        
         <StackPanel VerticalAlignment="Top" Margin="20,20,20,20">
+            <xctk:ColorPicker x:Name="ColorPickerControl"
+                              Width="200" 
+                              Height="134"
+                              HorizontalAlignment="Center" />
             <Button Content="Set All Lights"
-         
-            Style="{StaticResource RoundedButtonStyle}" 
-            Height="60" 
-            Width="200" 
-            Margin="0,20,0,0"
-            HorizontalAlignment="Center"/>
+                    Style="{StaticResource RoundedButtonStyle}" 
+                    Height="60" 
+                    Width="200" 
+                    Margin="0,20,0,0"
+                    HorizontalAlignment="Center"
+                    Click="SetAllLightsButtonClick"/>
         </StackPanel>
+        
     </Grid>
 </UserControl>

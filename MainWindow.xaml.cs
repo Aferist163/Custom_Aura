@@ -59,43 +59,41 @@ namespace Custom_Aura
             return (uint)((color.R) | (color.G << 8) | (color.B << 16));
         }
 
-        //private void SetAllLightsColor(object sender, RoutedEventArgs e)
-        //{
-        //    try
-        //    {
-        //        if (sdk == null)
-        //        {
-        //            MessageBox.Show("SDK не инициализирован!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
-        //            return;
-        //        }
+        public void SetAllLightsColor(System.Windows.Media.Color selectedColor)
+        {
+            try
+            {
+                if (sdk == null)
+                {
+                    MessageBox.Show("SDK не инициализирован!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
 
-        //        System.Windows.Media.Color selectedColor = ColorPickerControl.SelectedColor ?? System.Windows.Media.Colors.Red;
-
-        //        var devices = sdk.Enumerate(0);
-        //        foreach (IAuraSyncDevice dev in devices)
-        //        {
-        //            if (dev.Type == 0x80000)
-        //            {
-        //                try
-        //                {
-        //                    foreach (IAuraRgbLight light in dev.Lights)
-        //                    {
-        //                        light.Color = ConvertToRgbFormat(selectedColor);
-        //                    }
-        //                    dev.Apply();
-        //                    MessageBox.Show("Все устройства подсветки окрашены в выбранный цвет.", "Успешно", MessageBoxButton.OK, MessageBoxImage.Information);
-        //                }
-        //                catch (Exception ex)
-        //                {
-        //                    MessageBox.Show($"Ошибка при установке цвета всех светодиодов: {ex.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
-        //                }
-        //            }
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        MessageBox.Show($"Ошибка при изменении цвета устройств: {ex.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
-        //    }
-        //}
+                var devices = sdk.Enumerate(0);
+                foreach (IAuraSyncDevice dev in devices)
+                {
+                    if (dev.Type == 0x80000)
+                    {
+                        try
+                        {
+                            foreach (IAuraRgbLight light in dev.Lights)
+                            {
+                                light.Color = ConvertToRgbFormat(selectedColor);
+                            }
+                            dev.Apply();
+                            MessageBox.Show("Все устройства подсветки окрашены в выбранный цвет.", "Успешно", MessageBoxButton.OK, MessageBoxImage.Information);
+                        }
+                        catch (Exception ex)
+                        {
+                            MessageBox.Show($"Ошибка при установке цвета всех светодиодов: {ex.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка при изменении цвета устройств: {ex.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
     }
 }

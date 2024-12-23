@@ -15,14 +15,23 @@ using System.Windows.Shapes;
 
 namespace Custom_Aura.MVVM.View
 {
-    /// <summary>
-    /// Interaction logic for All_Collor.xaml
-    /// </summary>
     public partial class All_Collor : UserControl
     {
         public All_Collor()
         {
             InitializeComponent();
+        }
+
+        private void SetAllLightsButtonClick(object sender, RoutedEventArgs e)
+        {
+            // Получить выбранный цвет
+            Color selectedColor = ColorPickerControl.SelectedColor ?? Colors.Red;
+
+            // Отправить этот цвет в MainWindow
+            if (Application.Current.MainWindow is MainWindow mainWindow)
+            {
+                mainWindow.SetAllLightsColor(selectedColor);
+            }
         }
     }
 }
