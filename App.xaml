@@ -20,6 +20,10 @@
                 <view:Star_Effect/>
             </DataTemplate>
 
+            <DataTemplate DataType="{x:Type viewModel:Rain_Effect_ViewModel}">
+                <view:Rain_Effect/>
+            </DataTemplate>
+
         </ResourceDictionary>
     </Application.Resources>
 </Application>

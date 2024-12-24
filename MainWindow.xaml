@@ -103,6 +103,12 @@
                              Margin="0,30,0,0" 
                              VerticalAlignment="Top"
                              Command="{Binding Star_ViewComand}"/>
+
+                <RadioButton Content="RadioButton" 
+                             HorizontalAlignment="Center" 
+                             Margin="0,30,0,0" 
+                             VerticalAlignment="Top"
+                             Command="{Binding Rain_ViewComand}"/>
             </StackPanel>
 
         </Grid>

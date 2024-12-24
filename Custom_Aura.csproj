@@ -107,6 +107,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="MVVM\View\Rain_Effect.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MVVM\View\Star_Effect.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -123,9 +127,13 @@
   <ItemGroup>
     <Compile Include="MVVM\ViewModel\All_Color_ViewModel.cs" />
     <Compile Include="MVVM\ViewModel\MainViewModel.cs" />
+    <Compile Include="MVVM\ViewModel\Rain_Effect_ViewModel.cs" />
     <Compile Include="MVVM\ViewModel\Star_Effect_ViewModel.cs" />
     <Compile Include="MVVM\View\All_Collor.xaml.cs">
       <DependentUpon>All_Collor.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="MVVM\View\Rain_Effect.xaml.cs">
+      <DependentUpon>Rain_Effect.xaml</DependentUpon>
     </Compile>
     <Compile Include="MVVM\View\Star_Effect.xaml.cs">
       <DependentUpon>Star_Effect.xaml</DependentUpon>
