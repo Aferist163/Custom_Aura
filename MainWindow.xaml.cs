@@ -134,7 +134,7 @@ namespace Custom_Aura
             {
                 MessageBox.Show($"Ошибка при изменении цвета устройств: {ex.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
             }
-        } 
+        }
 
         public async void SetStarEffect(System.Windows.Media.Color backgroundColor, System.Windows.Media.Color starColor, double starDuration)
         {
@@ -156,7 +156,7 @@ namespace Custom_Aura
 
                 foreach (IAuraSyncDevice dev in devices)
                 {
-                    if (dev.Type == 0x80000) 
+                    if (dev.Type == 0x80000)
                     {
                         foreach (IAuraRgbLight light in dev.Lights)
                         {
@@ -168,14 +168,9 @@ namespace Custom_Aura
                         int height = (int)dev.Height;
                         int totalLights = width * height;
 
-                        var starStates = new (bool IsOn, double Progress, int Delay)[totalLights];
+                        var starStates = new (bool IsOn, double Progress)[totalLights];
 
-                        for (int i = 0; i < totalLights; i++)
-                        {
-                            starStates[i] = (false, 0.0, random.Next(500, 3000)); 
-                        }
-
-                        double progressIncrement = 100.0 / starDuration; 
+                        double progressIncrement = 100.0 / starDuration;
 
                         while (!cancellationToken.IsCancellationRequested)
                         {
@@ -183,19 +178,18 @@ namespace Custom_Aura
                             {
                                 if (!starStates[i].IsOn)
                                 {
-                                    starStates[i].Delay -= 100;
-                                    if (starStates[i].Delay <= 0 && random.NextDouble() < 0.10) 
+                                    if (random.NextDouble() < 0.15)
                                     {
-                                        starStates[i] = (true, 0.0, random.Next(500, 3000)); 
+                                        starStates[i] = (true, 0.0);
                                     }
                                 }
                                 else
                                 {
                                     starStates[i].Progress += progressIncrement;
-                                    if (starStates[i].Progress >= 2.0) 
+                                    if (starStates[i].Progress >= 2.0)
                                     {
                                         dev.Lights[i].Color = ConvertToRgbFormat(backgroundColor);
-                                        starStates[i] = (false, 0.0, random.Next(500, 3000)); 
+                                        starStates[i] = (false, 0.0);
                                     }
                                     else
                                     {
@@ -212,7 +206,7 @@ namespace Custom_Aura
                                 }
                             }
                             dev.Apply();
-                            await Task.Delay(100, cancellationToken); 
+                            await Task.Delay(100, cancellationToken);
                         }
                     }
                 }
