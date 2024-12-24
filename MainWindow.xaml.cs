@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -34,7 +35,8 @@ namespace Custom_Aura
             this.Close();
         }
 
-        private IAuraSdk sdk;
+        private IAuraSdk2 sdk;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -45,18 +47,56 @@ namespace Custom_Aura
         {
             try
             {
-                sdk = new AuraSdk();
+                sdk = new AuraSdk() as IAuraSdk2;
+
+                if (sdk == null)
+                {
+                    MessageBox.Show("IAuraSdk2 initialization failed. Ensure the SDK supports IAuraSdk2.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+
                 sdk.SwitchMode();
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ошибка инициализации Aura SDK: {ex.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"Error initializing Aura SDK: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
         private uint ConvertToRgbFormat(System.Windows.Media.Color color)
         {
             return (uint)((color.R) | (color.G << 8) | (color.B << 16));
+        }
+
+        private void ReleaseControl()
+        {
+            try
+            {
+                if (sdk != null)
+                {
+                    sdk.ReleaseControl(0);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error releasing Aura SDK control: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+
+
+
+
+        private CancellationTokenSource cancellationTokenSource;
+
+        public void StopStarEffect()
+        {
+            if (cancellationTokenSource != null)
+            {
+                cancellationTokenSource.Cancel(); 
+                cancellationTokenSource.Dispose(); 
+                cancellationTokenSource = null;
+            }
         }
 
         public void SetAllLightsColor(System.Windows.Media.Color selectedColor)
@@ -94,6 +134,98 @@ namespace Custom_Aura
             {
                 MessageBox.Show($"Ошибка при изменении цвета устройств: {ex.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
             }
+        } 
+
+        public async void SetStarEffect(System.Windows.Media.Color backgroundColor, System.Windows.Media.Color starColor, double starDuration)
+        {
+            try
+            {
+                StopStarEffect();
+
+                cancellationTokenSource = new CancellationTokenSource();
+                var cancellationToken = cancellationTokenSource.Token;
+
+                if (sdk == null)
+                {
+                    MessageBox.Show("SDK не инициализирован!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+
+                var devices = sdk.Enumerate(0);
+                var random = new Random();
+
+                foreach (IAuraSyncDevice dev in devices)
+                {
+                    if (dev.Type == 0x80000) 
+                    {
+                        foreach (IAuraRgbLight light in dev.Lights)
+                        {
+                            light.Color = ConvertToRgbFormat(backgroundColor);
+                        }
+                        dev.Apply();
+
+                        int width = (int)dev.Width;
+                        int height = (int)dev.Height;
+                        int totalLights = width * height;
+
+                        var starStates = new (bool IsOn, double Progress, int Delay)[totalLights];
+
+                        for (int i = 0; i < totalLights; i++)
+                        {
+                            starStates[i] = (false, 0.0, random.Next(500, 3000)); 
+                        }
+
+                        double progressIncrement = 100.0 / starDuration; 
+
+                        while (!cancellationToken.IsCancellationRequested)
+                        {
+                            for (int i = 0; i < totalLights; i++)
+                            {
+                                if (!starStates[i].IsOn)
+                                {
+                                    starStates[i].Delay -= 100;
+                                    if (starStates[i].Delay <= 0 && random.NextDouble() < 0.10) 
+                                    {
+                                        starStates[i] = (true, 0.0, random.Next(500, 3000)); 
+                                    }
+                                }
+                                else
+                                {
+                                    starStates[i].Progress += progressIncrement;
+                                    if (starStates[i].Progress >= 2.0) 
+                                    {
+                                        dev.Lights[i].Color = ConvertToRgbFormat(backgroundColor);
+                                        starStates[i] = (false, 0.0, random.Next(500, 3000)); 
+                                    }
+                                    else
+                                    {
+                                        double t = starStates[i].Progress <= 1.0
+                                            ? starStates[i].Progress
+                                            : 2.0 - starStates[i].Progress;
+
+                                        byte r = (byte)(backgroundColor.R + t * (starColor.R - backgroundColor.R));
+                                        byte g = (byte)(backgroundColor.G + t * (starColor.G - backgroundColor.G));
+                                        byte b = (byte)(backgroundColor.B + t * (starColor.B - backgroundColor.B));
+
+                                        dev.Lights[i].Color = (uint)((r) | (g << 8) | (b << 16));
+                                    }
+                                }
+                            }
+                            dev.Apply();
+                            await Task.Delay(100, cancellationToken); 
+                        }
+                    }
+                }
+            }
+            catch (TaskCanceledException)
+            {
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка при создании эффекта звездного неба: {ex.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
+
     }
 }

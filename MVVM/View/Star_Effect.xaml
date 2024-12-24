@@ -11,9 +11,9 @@
         <Rectangle Fill="Coral" RadiusX="15" RadiusY="15" />
         <StackPanel VerticalAlignment="Top" Margin="20,20,20,20">
 
-            <xctk:ColorPicker VerticalAlignment="Top" Height="140"/>
+            <xctk:ColorPicker  x:Name="ColorBackStar" VerticalAlignment="Top" Height="140"/>
 
-            <xctk:ColorSpectrumSlider Margin="20,-70,20,0" Width="18" Height="188" RenderTransformOrigin="0.5,0.5" BorderBrush="Coral">
+            <xctk:ColorSpectrumSlider x:Name="ColorStar" Margin="20,-70,20,0" Width="18" Height="188" RenderTransformOrigin="0.5,0.5" BorderBrush="Coral">
                 <xctk:ColorSpectrumSlider.RenderTransform>
                     <TransformGroup>
                         <ScaleTransform/>
@@ -29,7 +29,19 @@
                 Height="60" 
                 Width="200" 
                 Margin="0,-72,0,0"
-                HorizontalAlignment="Center"/>
+                HorizontalAlignment="Center"
+                Click="SetStarButtonClick"/>
+            <Slider x:Name="StarDurationSlider"
+        Margin="20,20,20,0"
+        VerticalAlignment="Top"
+        Height="16"
+        Minimum="500"
+        Maximum="5000"
+        Value="1000"
+        IsSnapToTickEnabled="True"
+        Foreground="Black"/>
         </StackPanel>
+      
+
     </Grid>
 </UserControl>
