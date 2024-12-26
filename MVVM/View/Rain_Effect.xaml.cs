@@ -15,14 +15,27 @@ using System.Windows.Shapes;
 
 namespace Custom_Aura.MVVM.View
 {
-    /// <summary>
-    /// Interaction logic for Rain_Effect.xaml
-    /// </summary>
     public partial class Rain_Effect : UserControl
     {
+       
+
         public Rain_Effect()
         {
             InitializeComponent();
+        }
+
+        private void SetRainButtonClick(object sender, RoutedEventArgs e)
+        {
+            Color selectedStarColor = ColorRainPick.SelectedColor;
+
+            Color selectedStarColorOne = ColorRainPickOne.SelectedColor ?? Colors.White;
+
+            
+
+            if (Application.Current.MainWindow is MainWindow mainWindow)
+            {
+                mainWindow.SetRainEffect(selectedStarColor, selectedStarColorOne);
+            }
         }
     }
 }

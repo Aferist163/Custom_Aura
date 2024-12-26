@@ -68,6 +68,15 @@ namespace Custom_Aura
             return (uint)((color.R) | (color.G << 8) | (color.B << 16));
         }
 
+        private System.Windows.Media.Color InterpolateColor(System.Windows.Media.Color from, System.Windows.Media.Color to, double progress)
+        {
+            progress = Math.Max(0, Math.Min(1, progress)); // Ограничение значения между 0 и 1
+            byte r = (byte)(from.R + (to.R - from.R) * progress);
+            byte g = (byte)(from.G + (to.G - from.G) * progress);
+            byte b = (byte)(from.B + (to.B - from.B) * progress);
+            return System.Windows.Media.Color.FromRgb(r, g, b);
+        }
+
         private void ReleaseControl()
         {
             try
@@ -220,6 +229,84 @@ namespace Custom_Aura
                 MessageBox.Show($"Ошибка при создании эффекта звездного неба: {ex.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
+
+        public async void SetRainEffect(System.Windows.Media.Color selectedColor, System.Windows.Media.Color backgroundColor)
+        {
+            try
+            {
+                if (sdk == null)
+                {
+                    MessageBox.Show("SDK не инициализирован!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+
+                var devices = sdk.Enumerate(0);
+                Random random = new Random();
+
+                foreach (IAuraSyncDevice dev in devices)
+                {
+                    if (dev.Type == 0x80000) 
+                    {
+                        try
+                        {
+                            foreach (IAuraRgbLight light in dev.Lights)
+                            {
+                                light.Color = ConvertToRgbFormat(backgroundColor);
+                            }
+                            dev.Apply();
+
+                            int width = (int)dev.Width;
+                            int height = (int)dev.Height;
+
+                            while (true) 
+                            {
+                                int startX = random.Next(0, width);
+                                int startY = random.Next(0, height);
+
+                                for (int radius = 0; radius <= 5; radius++) 
+                                {
+                                    for (int y = 0; y < height; y++)
+                                    {
+                                        for (int x = 0; x < width; x++)
+                                        {
+                                            int distance = Math.Abs(x - startX) + Math.Abs(y - startY);
+
+                                            if (distance == radius)
+                                            {
+                                                dev.Lights[y * width + x].Color = ConvertToRgbFormat(selectedColor);
+                                            }
+                                            else if (distance < radius)
+                                            {
+                                                dev.Lights[y * width + x].Color = ConvertToRgbFormat(backgroundColor);
+                                            }
+                                        }
+                                    }
+
+                                    dev.Apply();
+                                    await Task.Delay(200); 
+                                }
+                                await Task.Delay(500);
+                                foreach (IAuraRgbLight light in dev.Lights)
+                                {
+                                    light.Color = ConvertToRgbFormat(backgroundColor);
+                                }
+                                dev.Apply();
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            MessageBox.Show($"Ошибка при установке эффекта: {ex.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка при изменении цвета устройств: {ex.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+
 
     }
 }
