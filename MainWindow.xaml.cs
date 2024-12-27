@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Remoting.Metadata.W3cXsd2001;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -41,7 +42,110 @@ namespace Custom_Aura
         {
             InitializeComponent();
             InitializeAuraSdk();
+            InitializeMatrix(); // Инициализация матрицы
         }
+
+
+        private System.Windows.Shapes.Rectangle[,] virtualMatrix;
+
+
+        private void DrawMatrix(int rows, int columns, double cellSize, double cellSpacing)
+        {
+            MatrixCanvas.Children.Clear(); // Очистка Canvas перед отрисовкой новой матрицы
+            virtualMatrix = new System.Windows.Shapes.Rectangle[rows, columns];
+
+            for (int row = 0; row < rows; row++)
+            {
+                for (int col = 0; col < columns; col++)
+                {
+                    // Создаем квадрат
+                    var rectangle = new System.Windows.Shapes.Rectangle
+                    {
+                        Width = cellSize,
+                        Height = cellSize,
+                        Fill = System.Windows.Media.Brushes.Black
+                    };
+
+                    // Устанавливаем позицию квадрата с учетом отступа
+                    double x = col * (cellSize + cellSpacing);
+                    double y = row * (cellSize + cellSpacing);
+
+                    Canvas.SetLeft(rectangle, x);
+                    Canvas.SetTop(rectangle, y);
+
+                    // Добавляем квадрат на Canvas
+                    MatrixCanvas.Children.Add(rectangle);
+
+                    // Сохраняем в виртуальную матрицу
+                    virtualMatrix[row, col] = rectangle;
+                }
+            }
+        }
+
+        private void UpdateVirtualMatrix(int row, int col, uint color)
+        {
+            if (virtualMatrix == null) return;
+
+            // Преобразуем цвет из uint в SolidColorBrush
+            byte r = (byte)(color & 0xFF);
+            byte g = (byte)((color >> 8) & 0xFF);
+            byte b = (byte)((color >> 16) & 0xFF);
+
+            var brush = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(r, g, b));
+            virtualMatrix[row, col].Fill = brush;
+        }
+
+        private void InitializeMatrix()
+        {
+            try
+            {
+                if (sdk == null)
+                {
+                    MessageBox.Show("SDK не инициализирован!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+
+                var devices = sdk.Enumerate(0);
+                var random = new Random();
+
+                foreach (IAuraSyncDevice dev in devices)
+                {
+                    if (dev.Type == 0x80000)
+                    {
+                        int width = (int)dev.Width;
+                        int height = (int)dev.Height;
+                        DrawMatrix(height, width, 30, 5);
+
+                        for (int row = 0; row < height; row++)
+                        {
+                            for (int col = 0; col < width; col++)
+                            {
+                                int index = row * width + col;
+                                var light = dev.Lights[index];
+
+                                if (col < width / 2)
+                                {
+                                    light.Color = 0x0032a8a2; // Голубой
+                                    UpdateVirtualMatrix(row, col, light.Color); // Обновление виртуальной матрицы
+                                }
+                                else
+                                {
+                                    light.Color = 0x00000000; // Чёрный
+                                    UpdateVirtualMatrix(row, col, light.Color);
+                                }
+                            }
+                        }
+                        dev.Apply();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка при создании эффекта звездного неба: {ex.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+
 
         private void InitializeAuraSdk()
         {
@@ -121,21 +225,31 @@ namespace Custom_Aura
                 var devices = sdk.Enumerate(0);
                 foreach (IAuraSyncDevice dev in devices)
                 {
-                    if (dev.Type == 0x80000)
+
+                    int width = (int)dev.Width;
+                    int height = (int)dev.Height;
+                    int totalLights = width * height;
+
+                    for (int i = 0; i < totalLights; i++)
                     {
-                        try
+                        int row = i / width;
+                        int col = i % width;
+                        UpdateVirtualMatrix(row, col, ConvertToRgbFormat(selectedColor));
+                    }
+
+                    try
+                    {
+                        foreach (IAuraRgbLight light in dev.Lights)
                         {
-                            foreach (IAuraRgbLight light in dev.Lights)
-                            {
-                                light.Color = ConvertToRgbFormat(selectedColor);
-                            }
-                            dev.Apply();
-                            MessageBox.Show("Все устройства подсветки окрашены в выбранный цвет.", "Успешно", MessageBoxButton.OK, MessageBoxImage.Information);
+                            light.Color = ConvertToRgbFormat(selectedColor);
                         }
-                        catch (Exception ex)
-                        {
-                            MessageBox.Show($"Ошибка при установке цвета всех светодиодов: {ex.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
-                        }
+                        dev.Apply();
+
+                        MessageBox.Show("Все устройства подсветки окрашены в выбранный цвет.", "Успешно", MessageBoxButton.OK, MessageBoxImage.Information);
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"Ошибка при установке цвета всех светодиодов: {ex.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
                     }
                 }
             }
@@ -177,14 +291,19 @@ namespace Custom_Aura
                         int height = (int)dev.Height;
                         int totalLights = width * height;
 
-                        var starStates = new (bool IsOn, double Progress)[totalLights];
+                        // Инициализация виртуальной матрицы
+                        DrawMatrix(height, width, 30, 5);
 
+                        var starStates = new (bool IsOn, double Progress)[totalLights];
                         double progressIncrement = 100.0 / starDuration;
 
                         while (!cancellationToken.IsCancellationRequested)
                         {
                             for (int i = 0; i < totalLights; i++)
                             {
+                                int row = i / width;
+                                int col = i % width;
+
                                 if (!starStates[i].IsOn)
                                 {
                                     if (random.NextDouble() < 0.15)
@@ -198,6 +317,10 @@ namespace Custom_Aura
                                     if (starStates[i].Progress >= 2.0)
                                     {
                                         dev.Lights[i].Color = ConvertToRgbFormat(backgroundColor);
+
+                                        // Обновление виртуальной матрицы
+                                        UpdateVirtualMatrix(row, col, ConvertToRgbFormat(backgroundColor));
+
                                         starStates[i] = (false, 0.0);
                                     }
                                     else
@@ -210,7 +333,11 @@ namespace Custom_Aura
                                         byte g = (byte)(backgroundColor.G + t * (starColor.G - backgroundColor.G));
                                         byte b = (byte)(backgroundColor.B + t * (starColor.B - backgroundColor.B));
 
-                                        dev.Lights[i].Color = (uint)((r) | (g << 8) | (b << 16));
+                                        uint interpolatedColor = (uint)((r) | (g << 8) | (b << 16));
+                                        dev.Lights[i].Color = interpolatedColor;
+
+                                        // Обновление виртуальной матрицы
+                                        UpdateVirtualMatrix(row, col, interpolatedColor);
                                     }
                                 }
                             }
@@ -245,7 +372,7 @@ namespace Custom_Aura
 
                 foreach (IAuraSyncDevice dev in devices)
                 {
-                    if (dev.Type == 0x80000) 
+                    if (dev.Type == 0x80000)
                     {
                         try
                         {
@@ -258,12 +385,15 @@ namespace Custom_Aura
                             int width = (int)dev.Width;
                             int height = (int)dev.Height;
 
-                            while (true) 
+                            // Инициализация виртуальной матрицы
+                            DrawMatrix(height, width, 30, 5);
+
+                            while (true)
                             {
                                 int startX = random.Next(0, width);
                                 int startY = random.Next(0, height);
 
-                                for (int radius = 0; radius <= 5; radius++) 
+                                for (int radius = 0; radius <= 5; radius++)
                                 {
                                     for (int y = 0; y < height; y++)
                                     {
@@ -273,24 +403,43 @@ namespace Custom_Aura
 
                                             if (distance == radius)
                                             {
+                                                // Обновляем устройство
                                                 dev.Lights[y * width + x].Color = ConvertToRgbFormat(selectedColor);
+
+                                                // Обновляем виртуальную матрицу
+                                                UpdateVirtualMatrix(y, x, ConvertToRgbFormat(selectedColor));
                                             }
                                             else if (distance < radius)
                                             {
+                                                // Обновляем устройство
                                                 dev.Lights[y * width + x].Color = ConvertToRgbFormat(backgroundColor);
+
+                                                // Обновляем виртуальную матрицу
+                                                UpdateVirtualMatrix(y, x, ConvertToRgbFormat(backgroundColor));
                                             }
                                         }
                                     }
 
                                     dev.Apply();
-                                    await Task.Delay(200); 
+                                    await Task.Delay(200); // Задержка для обновления эффекта
                                 }
+
                                 await Task.Delay(500);
+
                                 foreach (IAuraRgbLight light in dev.Lights)
                                 {
                                     light.Color = ConvertToRgbFormat(backgroundColor);
                                 }
                                 dev.Apply();
+
+                                // Сброс виртуальной матрицы
+                                for (int y = 0; y < height; y++)
+                                {
+                                    for (int x = 0; x < width; x++)
+                                    {
+                                        UpdateVirtualMatrix(y, x, ConvertToRgbFormat(backgroundColor));
+                                    }
+                                }
                             }
                         }
                         catch (Exception ex)
@@ -305,8 +454,6 @@ namespace Custom_Aura
                 MessageBox.Show($"Ошибка при изменении цвета устройств: {ex.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
-
-
 
     }
 }

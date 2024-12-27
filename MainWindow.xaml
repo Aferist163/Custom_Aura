@@ -12,12 +12,12 @@
         Width="1000"
         Height="800" 
         WindowStartupLocation="CenterScreen">
-    
-        <Window.DataContext>
-            <viewModel:MainViewModel/>
-        </Window.DataContext>
-    
-    
+
+    <Window.DataContext>
+        <viewModel:MainViewModel/>
+    </Window.DataContext>
+
+
     <WindowChrome.WindowChrome>
         <WindowChrome 
             CaptionHeight="40"              
@@ -112,6 +112,9 @@
             </StackPanel>
 
         </Grid>
+
+        <Canvas x:Name="MatrixCanvas" Background="White" Margin="180,172,320,235"/>
+
 
     </Grid>
 </Window>
