@@ -7,7 +7,7 @@
              xmlns:local="clr-namespace:Custom_Aura.MVVM.View"
              mc:Ignorable="d" 
              d:DesignHeight="800" d:DesignWidth="1000">
-    <Grid x:Name="RightPanel" HorizontalAlignment="Right" Width="254" Margin="0,45,15,15">
+    <Grid x:Name="RightPanel" HorizontalAlignment="Right" Width="255" Margin="0,45,15,15">
         
         <Rectangle Fill="#FF361419" RadiusX="15" RadiusY="15" />
         

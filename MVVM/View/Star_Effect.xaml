@@ -7,7 +7,7 @@
              xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit" x:Class="Custom_Aura.MVVM.View.Star_Effect"
              mc:Ignorable="d" 
              d:DesignHeight="800" d:DesignWidth="1000">
-    <Grid x:Name="RightPanel" HorizontalAlignment="Right" Width="254" Margin="0,45,15,15">
+    <Grid x:Name="RightPanel" HorizontalAlignment="Right" Width="255" Margin="0,45,15,15">
         <Rectangle Fill="Coral" RadiusX="15" RadiusY="15" />
         <StackPanel VerticalAlignment="Top" Margin="20,20,20,20">
 

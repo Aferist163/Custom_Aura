@@ -42,7 +42,7 @@ namespace Custom_Aura
         {
             InitializeComponent();
             InitializeAuraSdk();
-            InitializeMatrix(); // Инициализация матрицы
+            InitializeMatrix(); 
         }
 
 
@@ -51,32 +51,27 @@ namespace Custom_Aura
 
         private void DrawMatrix(int rows, int columns, double cellSize, double cellSpacing)
         {
-            MatrixCanvas.Children.Clear(); // Очистка Canvas перед отрисовкой новой матрицы
+            MatrixCanvas.Children.Clear();
             virtualMatrix = new System.Windows.Shapes.Rectangle[rows, columns];
 
             for (int row = 0; row < rows; row++)
             {
                 for (int col = 0; col < columns; col++)
                 {
-                    // Создаем квадрат
                     var rectangle = new System.Windows.Shapes.Rectangle
                     {
                         Width = cellSize,
                         Height = cellSize,
                         Fill = System.Windows.Media.Brushes.Black
                     };
-
-                    // Устанавливаем позицию квадрата с учетом отступа
                     double x = col * (cellSize + cellSpacing);
                     double y = row * (cellSize + cellSpacing);
 
                     Canvas.SetLeft(rectangle, x);
                     Canvas.SetTop(rectangle, y);
 
-                    // Добавляем квадрат на Canvas
                     MatrixCanvas.Children.Add(rectangle);
 
-                    // Сохраняем в виртуальную матрицу
                     virtualMatrix[row, col] = rectangle;
                 }
             }
@@ -85,8 +80,6 @@ namespace Custom_Aura
         private void UpdateVirtualMatrix(int row, int col, uint color)
         {
             if (virtualMatrix == null) return;
-
-            // Преобразуем цвет из uint в SolidColorBrush
             byte r = (byte)(color & 0xFF);
             byte g = (byte)((color >> 8) & 0xFF);
             byte b = (byte)((color >> 16) & 0xFF);
@@ -115,27 +108,6 @@ namespace Custom_Aura
                         int width = (int)dev.Width;
                         int height = (int)dev.Height;
                         DrawMatrix(height, width, 30, 5);
-
-                        for (int row = 0; row < height; row++)
-                        {
-                            for (int col = 0; col < width; col++)
-                            {
-                                int index = row * width + col;
-                                var light = dev.Lights[index];
-
-                                if (col < width / 2)
-                                {
-                                    light.Color = 0x0032a8a2; // Голубой
-                                    UpdateVirtualMatrix(row, col, light.Color); // Обновление виртуальной матрицы
-                                }
-                                else
-                                {
-                                    light.Color = 0x00000000; // Чёрный
-                                    UpdateVirtualMatrix(row, col, light.Color);
-                                }
-                            }
-                        }
-                        dev.Apply();
                     }
                 }
             }

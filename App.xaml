@@ -10,6 +10,7 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="Style/MainGridStyle.xaml"/>
                 <ResourceDictionary Source="Style/SetButtomStyle.xaml"/>
+                <ResourceDictionary Source="Style/RadioButtomStyle.xaml"/>
             </ResourceDictionary.MergedDictionaries>
 
             <DataTemplate DataType="{x:Type viewModel:All_Color_ViewModel}">

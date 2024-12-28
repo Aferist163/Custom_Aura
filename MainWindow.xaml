@@ -17,7 +17,6 @@
         <viewModel:MainViewModel/>
     </Window.DataContext>
 
-
     <WindowChrome.WindowChrome>
         <WindowChrome 
             CaptionHeight="40"              
@@ -91,29 +90,32 @@
                         HorizontalAlignment="Center" 
                         Height="500">
 
-                <RadioButton Content="RadioButton" 
-                             HorizontalAlignment="Center" 
-                             Margin="0,0,0,0" 
-                             VerticalAlignment="Top"
-                             IsChecked="True"
-                             Command="{Binding All_ViewComand}"/>
 
-                <RadioButton Content="RadioButton" 
-                             HorizontalAlignment="Center" 
-                             Margin="0,30,0,0" 
-                             VerticalAlignment="Top"
-                             Command="{Binding Star_ViewComand}"/>
+                <RadioButton Style="{StaticResource RadioButtonStyle}" 
+                             Content="/Custom_Aura;component/IMG/All_logo.jpg" 
+                             Tag="All Lights" 
+                             IsChecked="True" 
+                             Command="{Binding All_ViewComand}" 
+                              />
 
-                <RadioButton Content="RadioButton" 
-                             HorizontalAlignment="Center" 
-                             Margin="0,30,0,0" 
-                             VerticalAlignment="Top"
-                             Command="{Binding Rain_ViewComand}"/>
+
+                <RadioButton Style="{StaticResource RadioButtonStyle}"  
+                            Content="/Custom_Aura;component/IMG/Star.jpg" 
+                            Tag="Star" 
+                            Command="{Binding Star_ViewComand}" 
+                             />
+
+                <RadioButton Style="{StaticResource RadioButtonStyle}"  
+                            Content="/Custom_Aura;component/IMG/None_logo.jpg" 
+                            Tag="None" 
+                            Command="{Binding Rain_ViewComand}" 
+                             />
+
             </StackPanel>
 
         </Grid>
 
-        <Canvas x:Name="MatrixCanvas" Background="White" Margin="180,172,320,235"/>
+        <Canvas x:Name="MatrixCanvas" Background="White" Margin="150,65,285,340"/>
 
 
     </Grid>
